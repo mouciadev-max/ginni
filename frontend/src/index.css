@@ -1,0 +1,101 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Dancing+Script:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #B91C1C;
+  --primary-light: #DC2626;
+  --primary-dark: #7F1D1D;
+  --golden: #D4A843;
+  --golden-light: #F0D78C;
+  --golden-dark: #B8860B;
+  --ivory: #FFF9F0;
+  --cream: #FFFDF7;
+  --maroon: #4A0E0E;
+  --ginni-bg: #FFF9F5;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply m-0 antialiased;
+  font-family: 'Poppins', system-ui, sans-serif;
+  background-color: var(--ginni-bg);
+  color: #1a1a1a;
+}
+
+#root {
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* Luxury focus ring */
+*:focus-visible {
+  @apply outline-none ring-2 ring-golden ring-offset-2 ring-offset-white;
+}
+
+/* Custom scrollbar - red & golden */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #faf5eb;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
+}
+
+/* Golden section divider */
+.golden-divider {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--golden), transparent);
+}
+
+/* Shimmer effect for loading */
+.shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Golden underline effect for section titles */
+.section-title::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--golden), var(--golden-light));
+  margin: 12px auto 0;
+  border-radius: 2px;
+}
+
+/* Product sale badge pulse */
+@keyframes pulse-badge {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.sale-badge {
+  animation: pulse-badge 2s ease-in-out infinite;
+}
+
+/* Hide scrollbar for horizontal scroll containers */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
