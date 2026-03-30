@@ -27,8 +27,8 @@ export default function Collection() {
       try {
         setLoading(true);
         const [prodRes, catRes] = await Promise.all([
-           axios.get('/api/products?limit=200'),
-           axios.get('/api/categories')
+          axios.get('${import.meta.env.VITE_API_URL}/api/products?limit=200'),
+          axios.get('${import.meta.env.VITE_API_URL}/api/categories')
         ]);
         if (prodRes.data?.success) setProducts(prodRes.data.data.products);
         if (catRes.data?.success) setDynamicCollections(catRes.data.data);
@@ -48,7 +48,7 @@ export default function Collection() {
 
   const filteredAndSorted = useMemo(() => {
     if (!showProductGrid) return [];
-    
+
     let list;
     if (!slug || slug === 'all') {
       // All Collections — show everything
@@ -93,14 +93,14 @@ export default function Collection() {
           </motion.h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-               <Link to="/collections/all" className="group block rounded-xl overflow-hidden bg-gray-100 aspect-[4/5] relative">
-                 <img src="https://images.unsplash.com/photo-1594633312681-4250c5e2d0f6?w=600" alt="All Ethnic Wear" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                 <div className="absolute inset-0 bg-gradient-to-t from-maroon/70 via-primary-dark/20 to-transparent" />
-                 <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6">
-                   <h3 className="font-serif text-xl font-semibold text-white">Shop All Items</h3>
-                   <span className="inline-block mt-2 text-sm text-golden font-medium">Shop now →</span>
-                 </div>
-               </Link>
+              <Link to="/collections/all" className="group block rounded-xl overflow-hidden bg-gray-100 aspect-[4/5] relative">
+                <img src="https://images.unsplash.com/photo-1594633312681-4250c5e2d0f6?w=600" alt="All Ethnic Wear" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                <div className="absolute inset-0 bg-gradient-to-t from-maroon/70 via-primary-dark/20 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6">
+                  <h3 className="font-serif text-xl font-semibold text-white">Shop All Items</h3>
+                  <span className="inline-block mt-2 text-sm text-golden font-medium">Shop now →</span>
+                </div>
+              </Link>
             </motion.div>
             {dynamicCollections.map((col, i) => (
               <motion.div

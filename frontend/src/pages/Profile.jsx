@@ -35,10 +35,10 @@ export default function Profile() {
       try {
         setLoading(true);
         const [profileRes, ordersRes] = await Promise.all([
-          axios.get('/api/user/profile', { headers: { Authorization: `Bearer ${token}` } }),
-          axios.get('/api/orders', { headers: { Authorization: `Bearer ${token}` } })
+          axios.get('${import.meta.env.VITE_API_URL}/api/user/profile', { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get('${import.meta.env.VITE_API_URL}/api/orders', { headers: { Authorization: `Bearer ${token}` } })
         ]);
-        
+
         const userData = profileRes.data.data;
         setProfile({
           name: userData.name || '',
@@ -48,14 +48,14 @@ export default function Profile() {
           address: userData.address || '',
           avatar: userData.avatar || '👩🏽',
         });
-        
+
         setOrders(ordersRes.data.data || []);
 
         // Fetch existing reviews for DELIVERED orders
         const deliveredOrders = (ordersRes.data.data || []).filter(o => o.status === 'DELIVERED');
         const reviewResults = await Promise.allSettled(
           deliveredOrders.map(o =>
-            axios.get(`/api/orders/${o.id}/review`, { headers: { Authorization: `Bearer ${token}` } })
+            axios.get(`${import.meta.env.VITE_API_URL}/api/orders/${o.id}/review`, { headers: { Authorization: `Bearer ${token}` } })
           )
         );
         const reviewMap = {};
@@ -83,7 +83,7 @@ export default function Profile() {
     e.preventDefault();
     try {
       const token = localStorage.getItem('accessToken');
-      await axios.put('/api/user/profile', {
+      await axios.put('${import.meta.env.VITE_API_URL}/api/user/profile', {
         name: profile.name,
         phone: profile.phone,
         address: profile.address,
@@ -110,7 +110,7 @@ export default function Profile() {
     setReviewForms(prev => ({ ...prev, [orderId]: { ...prev[orderId], submitting: true } }));
     try {
       const token = localStorage.getItem('accessToken');
-      const res = await axios.post(`/api/orders/${orderId}/review`, {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/orders/${orderId}/review`, {
         rating: form.rating || 5,
         comment: form.comment
       }, { headers: { Authorization: `Bearer ${token}` } });
@@ -133,27 +133,25 @@ export default function Profile() {
   return (
     <main className="min-h-screen bg-ginni-bg py-10 sm:py-16">
       <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-        
+
         {/* Navigation Tabs */}
         <div className="flex space-x-2 sm:space-x-6 mb-8 justify-center sm:justify-start">
           <button
             onClick={() => setActiveTab('info')}
-            className={`flex items-center gap-2 px-6 py-3 rounded-full font-sans font-semibold transition-all ${
-              activeTab === 'info' 
-              ? 'bg-primary text-white shadow-red border-2 border-primary' 
-              : 'bg-white text-gray-600 border-2 border-golden/20 hover:border-primary/50'
-            }`}
+            className={`flex items-center gap-2 px-6 py-3 rounded-full font-sans font-semibold transition-all ${activeTab === 'info'
+                ? 'bg-primary text-white shadow-red border-2 border-primary'
+                : 'bg-white text-gray-600 border-2 border-golden/20 hover:border-primary/50'
+              }`}
           >
             <HiOutlineUser className="w-5 h-5" />
             Personal Info
           </button>
           <button
             onClick={() => setActiveTab('orders')}
-            className={`flex items-center gap-2 px-6 py-3 rounded-full font-sans font-semibold transition-all ${
-              activeTab === 'orders' 
-              ? 'bg-primary text-white shadow-red border-2 border-primary' 
-              : 'bg-white text-gray-600 border-2 border-golden/20 hover:border-primary/50'
-            }`}
+            className={`flex items-center gap-2 px-6 py-3 rounded-full font-sans font-semibold transition-all ${activeTab === 'orders'
+                ? 'bg-primary text-white shadow-red border-2 border-primary'
+                : 'bg-white text-gray-600 border-2 border-golden/20 hover:border-primary/50'
+              }`}
           >
             <HiOutlineShoppingBag className="w-5 h-5" />
             My Orders
@@ -187,7 +185,7 @@ export default function Profile() {
                       </button>
                     )}
                   </div>
-                  
+
                   {!isEditing ? (
                     <button
                       onClick={() => setIsEditing(true)}
@@ -212,7 +210,7 @@ export default function Profile() {
                   <div>
                     <h2 className="font-serif text-2xl font-semibold text-gray-900 mb-6">Personal Details</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                      
+
                       {/* Name */}
                       <div className="sm:col-span-2">
                         <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
@@ -247,7 +245,7 @@ export default function Profile() {
                           <p className="px-4 py-3 bg-gray-50 rounded-xl text-gray-900 border border-transparent">{profile.gender}</p>
                         )}
                       </div>
-                      
+
                       {/* Phone */}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
@@ -343,32 +341,31 @@ export default function Profile() {
                       <div className="mb-8">
                         <div className="flex items-center justify-between relative">
                           <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-full h-1 bg-gray-200 z-0"></div>
-                          
+
                           {/* Progress Line */}
-                          <div 
-                            className="absolute left-0 top-1/2 transform -translate-y-1/2 h-1 bg-green-500 z-0 transition-all duration-500" 
-                            style={{ 
-                              width: order.status === 'DELIVERED' ? '100%' : 
-                                     order.status === 'SHIPPED' ? '50%' : 
-                                     order.status === 'CANCELLED' ? '0%' : '10%' 
+                          <div
+                            className="absolute left-0 top-1/2 transform -translate-y-1/2 h-1 bg-green-500 z-0 transition-all duration-500"
+                            style={{
+                              width: order.status === 'DELIVERED' ? '100%' :
+                                order.status === 'SHIPPED' ? '50%' :
+                                  order.status === 'CANCELLED' ? '0%' : '10%'
                             }}
                           ></div>
 
                           {['PENDING', 'SHIPPED', 'DELIVERED'].map((step, idx) => {
-                            const isCompleted = 
-                              order.status === 'DELIVERED' || 
+                            const isCompleted =
+                              order.status === 'DELIVERED' ||
                               (order.status === 'SHIPPED' && (step === 'PENDING' || step === 'SHIPPED')) ||
                               (order.status === 'PENDING' && step === 'PENDING') ||
                               (order.status === 'CONFIRMED' && step === 'PENDING');
-                              
+
                             const isCancelled = order.status === 'CANCELLED';
 
                             return (
                               <div key={step} className="z-10 flex flex-col items-center bg-white px-2">
-                                <div className={`w-8 h-8 rounded-full flex items-center justify-center border-4 border-white ${
-                                  isCancelled ? 'bg-red-500 text-white' :
-                                  isCompleted ? 'bg-green-500 text-white' : 'bg-gray-300 text-transparent'
-                                }`}>
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center border-4 border-white ${isCancelled ? 'bg-red-500 text-white' :
+                                    isCompleted ? 'bg-green-500 text-white' : 'bg-gray-300 text-transparent'
+                                  }`}>
                                   <HiCheck className="w-4 h-4" />
                                 </div>
                                 <span className={`text-[10px] sm:text-xs font-semibold mt-2 ${isCompleted ? 'text-gray-900' : 'text-gray-400'}`}>
@@ -410,7 +407,7 @@ export default function Profile() {
                                 <HiCheck className="w-4 h-4" /> Feedback Submitted
                               </p>
                               <div className="flex gap-0.5 mb-2">
-                                {[1,2,3,4,5].map(s => (
+                                {[1, 2, 3, 4, 5].map(s => (
                                   <HiStar key={s} className={`w-4 h-4 ${s <= reviews[order.id].rating ? 'text-yellow-400' : 'text-gray-300'}`} />
                                 ))}
                               </div>
@@ -425,7 +422,7 @@ export default function Profile() {
                               </h5>
                               {/* Star Rating */}
                               <div className="flex gap-1 mb-3">
-                                {[1,2,3,4,5].map(star => (
+                                {[1, 2, 3, 4, 5].map(star => (
                                   <button
                                     key={star}
                                     type="button"
@@ -433,11 +430,10 @@ export default function Profile() {
                                     className="transition-transform hover:scale-110"
                                   >
                                     <HiStar
-                                      className={`w-7 h-7 ${
-                                        star <= (reviewForms[order.id]?.rating ?? 5)
+                                      className={`w-7 h-7 ${star <= (reviewForms[order.id]?.rating ?? 5)
                                           ? 'text-yellow-400'
                                           : 'text-gray-300'
-                                      }`}
+                                        }`}
                                     />
                                   </button>
                                 ))}
@@ -456,7 +452,7 @@ export default function Profile() {
                                 className="mt-3 px-6 py-2.5 bg-primary text-white text-sm font-semibold rounded-full hover:bg-primary-dark transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
                               >
                                 {reviewForms[order.id]?.submitting ? (
-                                  <><svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> Submitting...</>
+                                  <><svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg> Submitting...</>
                                 ) : 'Submit Feedback'}
                               </button>
                             </div>

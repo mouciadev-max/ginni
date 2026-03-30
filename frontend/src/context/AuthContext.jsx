@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
           setLoading(false);
           return;
         }
-        const { data } = await axios.get('/api/user/profile', {
+        const { data } = await axios.get('${import.meta.env.VITE_API_URL}/api/user/profile', {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (data.success) {
@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const { data } = await axios.post('/api/auth/login', { email, password });
+      const { data } = await axios.post('${import.meta.env.VITE_API_URL}/api/auth/login', { email, password });
       if (data.success) {
         setUser(data.data.user);
         localStorage.setItem('accessToken', data.data.accessToken);
@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const register = async (userData) => {
-    const { data } = await axios.post('/api/auth/register', userData);
+    const { data } = await axios.post('${import.meta.env.VITE_API_URL}/api/auth/register', userData);
     if (data.success) {
       return true;
     }
@@ -59,10 +59,10 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       const token = localStorage.getItem('accessToken');
-      await axios.post('/api/auth/logout', {}, {
+      await axios.post('${import.meta.env.VITE_API_URL}/api/auth/logout', {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
-    } catch(err) {}
+    } catch (err) { }
     setUser(null);
     localStorage.removeItem('accessToken');
     localStorage.removeItem('userRole');

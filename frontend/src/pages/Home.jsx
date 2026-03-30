@@ -22,7 +22,7 @@ export default function Home() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const { data } = await axios.get('/api/products?limit=50');
+        const { data } = await axios.get('${import.meta.env.VITE_API_URL}/api/products?limit=50');
         if (data.success) {
           setProducts(data.data.products);
         }
@@ -106,14 +106,14 @@ export default function Home() {
                 </span>
               </div>
             </Link>
-            
+
             {/* Lehengas Card */}
             <Link to="/collections/lehengas" className="group rounded-xl overflow-hidden border-2 border-golden/20 shadow-sm hover:border-primary transition-all flex flex-col bg-white">
               <div className="aspect-square bg-gray-900 relative p-1 rounded-t-xl">
                 <img src="/images/hero1.png" alt="Festive Lehengas" className="w-full h-full object-cover rounded-lg opacity-60 group-hover:opacity-50 group-hover:scale-[1.03] transition-all duration-500" />
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                   <span className="font-serif text-3xl sm:text-5xl text-white text-center leading-tight drop-shadow-md">
-                    Festive<br/>
+                    Festive<br />
                     <span className="italic">Lehengas</span>
                   </span>
                 </div>
@@ -134,7 +134,7 @@ export default function Home() {
           <h2 className="text-center font-sans text-xl sm:text-2xl font-bold text-gray-900 mb-8 uppercase tracking-widest section-title">
             BESTSELLERS
           </h2>
-          
+
           {/* Bestsellers Banner */}
           <Link to="/collections/festive" className="block relative rounded-2xl overflow-hidden mb-8 group bg-gray-900 shadow-md h-[200px] sm:h-[300px]">
             <img src="/images/hero3.png" alt="Festive Collection" className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:scale-[1.02] transition-transform duration-700" />
@@ -155,13 +155,13 @@ export default function Home() {
 
           {/* Grid showing only top 4 bestsellers */}
           <ProductGrid products={filteredProducts.slice(0, 4)} />
-          
+
           <div className="mt-8 text-center">
-             <Link to="/collections">
-               <span className="inline-block border-2 border-primary text-primary hover:bg-primary hover:text-white px-8 py-3 rounded-full font-bold text-sm transition-colors uppercase tracking-wider">
-                  View All Bestsellers
-               </span>
-             </Link>
+            <Link to="/collections">
+              <span className="inline-block border-2 border-primary text-primary hover:bg-primary hover:text-white px-8 py-3 rounded-full font-bold text-sm transition-colors uppercase tracking-wider">
+                View All Bestsellers
+              </span>
+            </Link>
           </div>
         </div>
       </section>

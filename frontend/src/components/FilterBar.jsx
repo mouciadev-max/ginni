@@ -31,7 +31,7 @@ export default function FilterBar({ productCount = 0, onPriceFilter, onCategoryF
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const { data } = await axios.get('/api/categories');
+        const { data } = await axios.get('${import.meta.env.VITE_API_URL}/api/categories');
         if (data && data.data) {
           const mapImages = data.data.map((cat, idx) => ({
             ...cat,
@@ -74,11 +74,10 @@ export default function FilterBar({ productCount = 0, onPriceFilter, onCategoryF
               key={filter.max}
               type="button"
               onClick={() => handlePriceClick(filter)}
-              className={`flex-shrink-0 px-4 py-2 rounded-full border text-xs sm:text-sm font-medium transition-all ${
-                activePrice === filter.max
+              className={`flex-shrink-0 px-4 py-2 rounded-full border text-xs sm:text-sm font-medium transition-all ${activePrice === filter.max
                   ? 'bg-primary text-white border-primary'
                   : 'bg-white text-gray-700 border-gray-200 hover:border-primary/30 hover:text-primary'
-              }`}
+                }`}
               whileTap={{ scale: 0.95 }}
             >
               {filter.label}
@@ -102,11 +101,10 @@ export default function FilterBar({ productCount = 0, onPriceFilter, onCategoryF
               whileTap={{ scale: 0.95 }}
             >
               <div
-                className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2 transition-colors ${
-                  activeCategory === cat.slug
+                className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2 transition-colors ${activeCategory === cat.slug
                     ? 'border-primary shadow-red'
                     : 'border-golden/30 hover:border-primary/40'
-                }`}
+                  }`}
               >
                 <img
                   src={cat.image}
@@ -115,9 +113,8 @@ export default function FilterBar({ productCount = 0, onPriceFilter, onCategoryF
                   loading="lazy"
                 />
               </div>
-              <span className={`text-[10px] sm:text-xs font-medium text-center leading-tight whitespace-pre-line ${
-                activeCategory === cat.slug ? 'text-primary font-semibold' : 'text-gray-600'
-              }`}>
+              <span className={`text-[10px] sm:text-xs font-medium text-center leading-tight whitespace-pre-line ${activeCategory === cat.slug ? 'text-primary font-semibold' : 'text-gray-600'
+                }`}>
                 {cat.name}
               </span>
             </motion.button>

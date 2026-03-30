@@ -22,7 +22,7 @@ export default function Product() {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        const { data } = await axios.get(`/api/products/${id}`);
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/products/${id}`);
         if (data.success) {
           setProduct(data.data);
         }
@@ -89,9 +89,8 @@ export default function Product() {
                       key={i}
                       type="button"
                       onClick={() => setSelectedImage(i)}
-                      className={`flex-shrink-0 w-20 h-24 rounded-xl overflow-hidden border-2 transition-all shadow-sm ${
-                        selectedImage === i ? 'border-primary ring-2 ring-primary/20 scale-105' : 'border-transparent hover:border-golden/40'
-                      }`}
+                      className={`flex-shrink-0 w-20 h-24 rounded-xl overflow-hidden border-2 transition-all shadow-sm ${selectedImage === i ? 'border-primary ring-2 ring-primary/20 scale-105' : 'border-transparent hover:border-golden/40'
+                        }`}
                     >
                       <img src={img} alt="" className="h-full w-full object-cover" />
                     </button>
@@ -116,7 +115,7 @@ export default function Product() {
               >
                 {product.name}
               </motion.h1>
-              
+
               <div className="mt-4 flex items-center gap-2">
                 <div className="flex items-center gap-1 bg-green-50 px-2.5 py-1 rounded-full border border-green-100">
                   <span className="font-bold text-sm text-green-700">{product.rating || '4.8'}</span>
@@ -142,7 +141,7 @@ export default function Product() {
                   </>
                 )}
               </div>
-              
+
               <p className="mt-2 text-xs text-gray-500 font-sans">Inclusive of all taxes</p>
 
               <div className="mt-8 pt-8 border-t border-golden/10">
@@ -187,9 +186,8 @@ export default function Product() {
                 <motion.button
                   type="button"
                   onClick={() => setWishlisted(!wishlisted)}
-                  className={`p-4 rounded-full border-2 shadow-sm transition-all ${
-                    wishlisted ? 'border-primary bg-primary/10 text-primary' : 'border-golden/30 bg-white text-gray-400 hover:border-primary/50 hover:text-primary'
-                  }`}
+                  className={`p-4 rounded-full border-2 shadow-sm transition-all ${wishlisted ? 'border-primary bg-primary/10 text-primary' : 'border-golden/30 bg-white text-gray-400 hover:border-primary/50 hover:text-primary'
+                    }`}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >

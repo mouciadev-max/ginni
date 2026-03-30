@@ -22,11 +22,11 @@ export default function Navbar() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const { data } = await axios.get('/api/categories');
+        const { data } = await axios.get('${import.meta.env.VITE_API_URL}/api/categories');
         if (data && data.success) {
           const allowedSlugs = ['sarees', 'lehengas'];
           const filteredCategories = data.data.filter(cat => allowedSlugs.includes(cat.slug));
-          
+
           const dynamicLinks = filteredCategories.map(cat => ({
             to: `/collections/${cat.slug}`,
             label: cat.name,
@@ -87,12 +87,11 @@ export default function Navbar() {
                   <NavLink
                     to={to}
                     className={({ isActive }) =>
-                      `px-3 py-2 font-sans text-sm font-medium rounded-lg transition-all duration-200 ${
-                        highlight
-                          ? 'text-primary font-semibold hover:bg-primary/5'
-                          : isActive
-                            ? 'text-primary bg-primary/5'
-                            : 'text-gray-700 hover:text-primary hover:bg-ivory'
+                      `px-3 py-2 font-sans text-sm font-medium rounded-lg transition-all duration-200 ${highlight
+                        ? 'text-primary font-semibold hover:bg-primary/5'
+                        : isActive
+                          ? 'text-primary bg-primary/5'
+                          : 'text-gray-700 hover:text-primary hover:bg-ivory'
                       }`
                     }
                   >
@@ -156,7 +155,7 @@ export default function Navbar() {
                         </Link>
                       )}
                       <button onClick={logout} className="px-4 py-2 hover:bg-ivory text-red-600 text-sm flex items-center gap-2 w-full text-left">
-                        <HiArrowRightOnRectangle className="w-4 h-4"/> Logout
+                        <HiArrowRightOnRectangle className="w-4 h-4" /> Logout
                       </button>
                     </div>
                   </div>
@@ -253,17 +252,17 @@ export default function Navbar() {
                           className="flex items-center gap-4 text-gray-700 hover:text-primary transition-colors text-lg font-sans py-2"
                           onClick={closeMobile}
                         >
-                           <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center border border-gray-200">
+                          <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center border border-gray-200">
                             <span className="font-bold text-gray-600">A</span>
                           </div>
                           <span className="tracking-wide">Admin Panel</span>
                         </Link>
                       )}
-                      <button 
+                      <button
                         onClick={() => { logout(); closeMobile(); }}
                         className="flex items-center gap-4 text-gray-700 hover:text-primary transition-colors text-lg font-sans py-2 text-left"
                       >
-                         <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
                           <HiArrowRightOnRectangle className="w-5 h-5 text-gray-500" />
                         </div>
                         <span className="tracking-wide">Logout</span>
@@ -289,12 +288,11 @@ export default function Navbar() {
                         to={to}
                         onClick={closeMobile}
                         className={({ isActive }) =>
-                          `block py-3 px-3 rounded-lg font-sans text-base font-medium transition-colors ${
-                            highlight
-                              ? 'text-primary font-semibold'
-                              : isActive
-                                ? 'text-primary bg-primary/5'
-                                : 'text-gray-700 hover:text-primary hover:bg-ivory'
+                          `block py-3 px-3 rounded-lg font-sans text-base font-medium transition-colors ${highlight
+                            ? 'text-primary font-semibold'
+                            : isActive
+                              ? 'text-primary bg-primary/5'
+                              : 'text-gray-700 hover:text-primary hover:bg-ivory'
                           }`
                         }
                       >
