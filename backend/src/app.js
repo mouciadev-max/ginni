@@ -9,9 +9,9 @@ const app = express();
 
 // Middlewares
 app.use(helmet({ crossOriginResourcePolicy: false }));
-app.use(cors({ 
-  origin: ['http://localhost:5173', 'http://localhost:5174', 'http://127.0.0.1:5173', 'http://127.0.0.1:5174', process.env.FRONTEND_URL], 
-  credentials: true 
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://localhost:5174', 'http://127.0.0.1:5173', 'http://127.0.0.1:5174', process.env.FRONTEND_URL],
+  credentials: true
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -42,13 +42,13 @@ const adminRoutes = require('./routes/admin.routes');
 const categoryRoutes = require('./routes/category.routes');
 const reviewRoutes = require('./routes/review.routes');
 
-app.use('/api/auth', authRoutes);
-app.use('/api/user', userRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/categories', categoryRoutes);
-app.use('/api/cart', cartRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/admin', adminRoutes);
+app.use('/apiauth', authRoutes);
+app.use('/apiuser', userRoutes);
+app.use('/apiproducts', productRoutes);
+app.use('/apicategories', categoryRoutes);
+app.use('/apicart', cartRoutes);
+app.use('/apiorders', orderRoutes);
+app.use('/apiadmin', adminRoutes);
 app.use('/api', reviewRoutes);
 
 // Global Error Handler

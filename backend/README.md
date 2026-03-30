@@ -55,7 +55,7 @@ docker-compose exec api npx prisma db push
 
 ## 📖 Example API Requests & Responses
 
-### 1. Register User (`POST /api/auth/register`)
+### 1. Register User (`POST ${import.meta.env.VITE_API_URL}/api/auth/register`)
 **Request Body**:
 ```json
 {
@@ -80,7 +80,7 @@ docker-compose exec api npx prisma db push
 }
 ```
 
-### 2. Login User (`POST /api/auth/login`)
+### 2. Login User (`POST ${import.meta.env.VITE_API_URL}/api/auth/login`)
 **Request Body**:
 ```json
 {
@@ -106,7 +106,7 @@ docker-compose exec api npx prisma db push
 }
 ```
 
-### 3. Fetch Products (`GET /api/products?page=1&limit=10`)
+### 3. Fetch Products (`GET ${import.meta.env.VITE_API_URL}/api/products?page=1&limit=10`)
 **Response**:
 ```json
 {
@@ -131,7 +131,7 @@ docker-compose exec api npx prisma db push
 }
 ```
 
-### 4. Create Order (`POST /api/orders`) - *Requires Auth*
+### 4. Create Order (`POST ${import.meta.env.VITE_API_URL}/api/orders`) - *Requires Auth*
 **Request Body**:
 ```json
 {
