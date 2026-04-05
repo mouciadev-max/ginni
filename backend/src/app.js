@@ -21,7 +21,7 @@ app.use(morgan('dev'));
 // Rate Limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  max: 10000, // limit each IP to 10000 requests per windowMs
 });
 app.use('/api', limiter);
 
@@ -41,14 +41,16 @@ const orderRoutes = require('./routes/order.routes');
 const adminRoutes = require('./routes/admin.routes');
 const categoryRoutes = require('./routes/category.routes');
 const reviewRoutes = require('./routes/review.routes');
+const reelRoutes = require('./routes/reel.routes');
 
-app.use('/apiauth', authRoutes);
-app.use('/apiuser', userRoutes);
-app.use('/apiproducts', productRoutes);
-app.use('/apicategories', categoryRoutes);
-app.use('/apicart', cartRoutes);
-app.use('/apiorders', orderRoutes);
-app.use('/apiadmin', adminRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/user', userRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/cart', cartRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/reels', reelRoutes);
 app.use('/api', reviewRoutes);
 
 // Global Error Handler

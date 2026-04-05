@@ -5,21 +5,47 @@ const upload = require('../middlewares/upload.middleware');
 
 const router = Router();
 
-// Public routes
+// ================= PUBLIC ROUTES =================
 router.get('/categories', productController.getCategories);
 router.get('/', productController.getProducts);
 router.get('/:id', productController.getProductById);
 
-// Admin only routes
-router.use(verifyJWT);
-router.use(verifyRole('ADMIN'));
+// ================= ADMIN ROUTES =================
+router.post(
+  '/categories',
+  verifyJWT,
+  verifyRole('ADMIN'),
+  productController.createCategory
+);
 
-router.post('/categories', productController.createCategory);
-router.delete('/categories/:id', productController.deleteCategory);
+router.delete(
+  '/categories/:id',
+  verifyJWT,
+  verifyRole('ADMIN'),
+  productController.deleteCategory
+);
 
-// Product creation accepts up to 5 images
-router.post('/', upload.array('images', 5), productController.createProduct);
-router.put('/:id', upload.array('images', 5), productController.updateProduct);
-router.delete('/:id', productController.deleteProduct);
+router.post(
+  '/',
+  verifyJWT,
+  verifyRole('ADMIN'),
+  upload.array('images', 5),
+  productController.createProduct
+);
+
+router.put(
+  '/:id',
+  verifyJWT,
+  verifyRole('ADMIN'),
+  upload.array('images', 5),
+  productController.updateProduct
+);
+
+router.delete(
+  '/:id',
+  verifyJWT,
+  verifyRole('ADMIN'),
+  productController.deleteProduct
+);
 
 module.exports = router;

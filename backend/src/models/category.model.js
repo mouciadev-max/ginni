@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 
 const categorySchema = new mongoose.Schema({
   name: { type: String, required: true },
-  slug: { type: String, required: true, unique: true }
+  slug: { type: String, required: true, unique: true },
+  image: { type: String, default: null }
 }, {
   timestamps: true,
   toJSON: { virtuals: true, transform: (doc, ret) => { ret.id = ret._id; delete ret._id; delete ret.__v; } }
