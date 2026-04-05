@@ -56,7 +56,7 @@ export default function Checkout() {
 
   const handleCOD = async () => {
     const token = localStorage.getItem('accessToken');
-    const response = await fetch('${import.meta.env.VITE_API_URL}/api/orders', {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/orders`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({ ...getOrderPayload(), paymentMethod: 'COD' })
@@ -75,7 +75,7 @@ export default function Checkout() {
     if (!loaded) throw new Error('Razorpay SDK failed to load. Please check your internet connection.');
 
     // 2. Create Razorpay order on backend
-    const createRes = await fetch('${import.meta.env.VITE_API_URL}/api/orders/razorpay/create', {
+    const createRes = await fetch(`${import.meta.env.VITE_API_URL}/api/orders/razorpay/create`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({ amount: cartTotal })
@@ -103,7 +103,7 @@ export default function Checkout() {
         handler: async (paymentResponse) => {
           try {
             // 4. Verify payment on backend and place order
-            const verifyRes = await fetch('${import.meta.env.VITE_API_URL}/api/orders/razorpay/verify', {
+            const verifyRes = await fetch(`${import.meta.env.VITE_API_URL}/api/orders/razorpay/verify`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
               body: JSON.stringify({

@@ -13,6 +13,7 @@ export default function AdminDashboard() {
   const [categories, setCategories] = useState([]);
   const [users, setUsers] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [reels, setReels] = useState([]);
 
   // Form States
   const [newCategory, setNewCategory] = useState({ name: '' });
@@ -21,6 +22,10 @@ export default function AdminDashboard() {
     name: '', description: '', price: '', deliveryCharge: '', stock: '', categoryId: '', subcategoryId: ''
   });
   const [imageFile, setImageFile] = useState(null);
+  const [categoryImage, setCategoryImage] = useState(null);
+  const [subcategoryImage, setSubcategoryImage] = useState(null);
+  const [newReel, setNewReel] = useState({ productId: '' });
+  const [reelVideoFile, setReelVideoFile] = useState(null);
   const [editingProductId, setEditingProductId] = useState(null);
 
   useEffect(() => {
@@ -33,16 +38,18 @@ export default function AdminDashboard() {
 
   const fetchData = async () => {
     try {
-      const [prodRes, catRes, userRes, orderRes] = await Promise.all([
-        axios.get('${import.meta.env.VITE_API_URL}/api/products?limit=100'),
-        axios.get('${import.meta.env.VITE_API_URL}/api/categories'),
-        axios.get('${import.meta.env.VITE_API_URL}/api/admin/users', { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` } }),
-        axios.get('${import.meta.env.VITE_API_URL}/api/admin/orders', { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` } })
+      const [prodRes, catRes, userRes, orderRes, reelRes] = await Promise.all([
+        axios.get(`${import.meta.env.VITE_API_URL}/api/products?limit=100`),
+        axios.get(`${import.meta.env.VITE_API_URL}/api/categories`),
+        axios.get(`${import.meta.env.VITE_API_URL}/api/admin/users`, { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` } }),
+        axios.get(`${import.meta.env.VITE_API_URL}/api/admin/orders`, { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` } }),
+        axios.get(`${import.meta.env.VITE_API_URL}/api/reels`)
       ]);
       setProducts(prodRes.data.data.products || []);
       setCategories(catRes.data.data || []);
       setUsers(userRes.data.data || []);
       setOrders(orderRes.data.data?.orders || []);
+      setReels(reelRes.data.data || []);
     } catch (error) {
       console.error('Error fetching admin data', error);
       alert(error.response?.data?.message || 'Error fetching data. Please refresh.');
@@ -52,9 +59,19 @@ export default function AdminDashboard() {
   const handleAddCategory = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('${import.meta.env.VITE_API_URL}/api/categories', newCategory, { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` } });
+      const formData = new FormData();
+      formData.append('name', newCategory.name);
+      if (categoryImage) formData.append('image', categoryImage);
+
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/categories`, formData, { 
+        headers: { 
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}` 
+        } 
+      });
       fetchData();
       setNewCategory({ name: '' });
+      setCategoryImage(null);
     } catch (error) {
       console.error(error);
       alert(error.response?.data?.message || 'Failed to add category');
@@ -64,9 +81,19 @@ export default function AdminDashboard() {
   const handleAddSubcategory = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/api/categories/${newSubcategory.categoryId}/subcategories`, { name: newSubcategory.name }, { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` } });
+      const formData = new FormData();
+      formData.append('name', newSubcategory.name);
+      if (subcategoryImage) formData.append('image', subcategoryImage);
+
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/categories/${newSubcategory.categoryId}/subcategories`, formData, { 
+        headers: { 
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}` 
+        } 
+      });
       fetchData();
       setNewSubcategory({ name: '', categoryId: '' });
+      setSubcategoryImage(null);
     } catch (error) {
       console.error(error);
       alert(error.response?.data?.message || 'Failed to add subcategory');
@@ -114,7 +141,7 @@ export default function AdminDashboard() {
       if (editingProductId) {
         await axios.put(`${import.meta.env.VITE_API_URL}/api/products/${editingProductId}`, formData, config);
       } else {
-        await axios.post('${import.meta.env.VITE_API_URL}/api/products', formData, config);
+        await axios.post(`${import.meta.env.VITE_API_URL}/api/products`, formData, config);
       }
 
       fetchData();
@@ -151,6 +178,40 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleAddReel = async (e) => {
+    e.preventDefault();
+    if (!reelVideoFile) return alert('Please attach a video file.');
+    try {
+      const formData = new FormData();
+      formData.append('productId', newReel.productId);
+      formData.append('video', reelVideoFile);
+
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/reels`, formData, { 
+        headers: { 
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}` 
+        } 
+      });
+      fetchData();
+      setNewReel({ productId: '' });
+      setReelVideoFile(null);
+    } catch (error) {
+      console.error(error);
+      alert(error.response?.data?.message || 'Failed to add reel');
+    }
+  };
+
+  const handleDeleteReel = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this reel?")) return;
+    try {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/reels/${id}`, { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` } });
+      fetchData();
+    } catch (error) {
+      console.error(error);
+      alert(error.response?.data?.message || 'Failed to delete reel');
+    }
+  };
+
   const handleDeleteUser = async (id) => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
     try {
@@ -172,7 +233,7 @@ export default function AdminDashboard() {
     }
   };
 
-  const tabs = ['products', 'categories', 'users', 'orders'];
+  const tabs = ['products', 'categories', 'reels', 'users', 'orders'];
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -197,6 +258,7 @@ export default function AdminDashboard() {
               <h2 className="text-xl font-semibold mb-4">Add Category</h2>
               <form onSubmit={handleAddCategory} className="flex gap-4">
                 <input required type="text" placeholder="Category Name" value={newCategory.name} onChange={e => setNewCategory({ name: e.target.value })} className="border p-2 rounded flex-1" />
+                <input type="file" accept="image/*" onChange={e => setCategoryImage(e.target.files[0])} className="border p-2 rounded flex-1" />
                 <button type="submit" className="bg-primary text-white px-4 py-2 rounded">Add</button>
               </form>
             </div>
@@ -209,6 +271,7 @@ export default function AdminDashboard() {
                   {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
                 <input required type="text" placeholder="Subcategory Name" value={newSubcategory.name} onChange={e => setNewSubcategory({ ...newSubcategory, name: e.target.value })} className="border p-2 rounded flex-1" />
+                <input type="file" accept="image/*" onChange={e => setSubcategoryImage(e.target.files[0])} className="border p-2 rounded flex-1" />
                 <button type="submit" className="bg-primary text-white px-4 py-2 rounded">Add</button>
               </form>
             </div>
@@ -219,12 +282,16 @@ export default function AdminDashboard() {
                 {categories.map(c => (
                   <li key={c.id} className="mb-4">
                     <div className="flex items-center gap-4">
+                      {c.image ? <img src={c.image} alt={c.name} className="w-10 h-10 object-cover rounded shadow" /> : <div className="w-10 h-10 bg-gray-200 rounded"></div>}
                       <span className="font-semibold text-lg">{c.name}</span>
-                      <button onClick={() => handleDeleteCategory(c.id)} className="text-red-500 hover:text-red-700 text-sm font-medium">Delete Category</button>
+                      {!['sarees', 'lehengas', 'unstitched-suits-suits', 'girls-ethnic-wear', 'wedding-collection', 'festive-collection'].includes(c.slug) && (
+                        <button onClick={() => handleDeleteCategory(c.id)} className="text-red-500 hover:text-red-700 text-sm font-medium">Delete Category</button>
+                      )}
                     </div>
                     <ul className="list-circle pl-5 text-gray-600 mt-1">
                       {c.subcategories?.map(sc => (
                         <li key={sc.id} className="flex items-center gap-3 mb-1">
+                          {sc.image ? <img src={sc.image} alt={sc.name} className="w-6 h-6 object-cover rounded-full" /> : <div className="w-6 h-6 bg-gray-200 rounded-full"></div>}
                           <span>{sc.name}</span>
                           <button onClick={() => handleDeleteSubcategory(sc.id)} className="text-red-400 hover:text-red-600 text-xs font-semibold">Delete Subcategory</button>
                         </li>
@@ -430,6 +497,43 @@ export default function AdminDashboard() {
               </div>
             ))}
             {orders.length === 0 && <p className="text-gray-500 text-center py-8">No orders found.</p>}
+          </div>
+        )}
+
+        {activeTab === 'reels' && (
+          <div className="space-y-8">
+            <div className="bg-gray-50 p-4 rounded border">
+              <h2 className="text-xl font-semibold mb-4">Add Reel Video (Max 3)</h2>
+              {reels.length >= 3 ? (
+                <div className="bg-red-50 text-red-600 p-4 rounded-lg font-medium">You have reached the maximum limit of 3 reels. Please delete an existing reel to upload a new one.</div>
+              ) : (
+                <form onSubmit={handleAddReel} className="flex flex-col sm:flex-row gap-4">
+                  <select required value={newReel.productId} onChange={e => setNewReel({ productId: e.target.value })} className="border p-2 rounded flex-auto">
+                    <option value="">Link to Product</option>
+                    {products.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                  </select>
+                  <input required type="file" accept="video/*" onChange={e => setReelVideoFile(e.target.files[0])} className="border p-2 rounded flex-auto" />
+                  <button type="submit" className="bg-primary text-white px-4 py-2 rounded">Upload Video</button>
+                </form>
+              )}
+            </div>
+
+            <div>
+              <h3 className="font-bold mb-4">Existing Reels ({reels.length} / 3)</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {reels.map(r => (
+                  <div key={r.id} className="bg-white border rounded-xl overflow-hidden shadow-sm relative group">
+                    <div className="aspect-[9/16] bg-black">
+                      <video src={r.videoUrl} className="w-full h-full object-cover" muted loop playsInline onMouseOver={e => e.target.play()} onMouseOut={e => e.target.pause()} />
+                    </div>
+                    <div className="p-3 text-center border-t border-gray-100 bg-ivory">
+                      <p className="text-sm font-semibold truncate mb-2">{r.productId?.name || 'Unknown Product'}</p>
+                      <button onClick={() => handleDeleteReel(r.id)} className="bg-red-500 hover:bg-red-600 text-white text-xs px-4 py-1.5 rounded-full shadow-sm transition-colors uppercase tracking-widest font-bold w-full">Delete Reel</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         )}
       </div>

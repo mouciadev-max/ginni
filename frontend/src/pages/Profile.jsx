@@ -35,8 +35,8 @@ export default function Profile() {
       try {
         setLoading(true);
         const [profileRes, ordersRes] = await Promise.all([
-          axios.get('${import.meta.env.VITE_API_URL}/api/user/profile', { headers: { Authorization: `Bearer ${token}` } }),
-          axios.get('${import.meta.env.VITE_API_URL}/api/orders', { headers: { Authorization: `Bearer ${token}` } })
+          axios.get(`${import.meta.env.VITE_API_URL}/api/user/profile`, { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get(`${import.meta.env.VITE_API_URL}/api/orders`, { headers: { Authorization: `Bearer ${token}` } })
         ]);
 
         const userData = profileRes.data.data;
@@ -83,7 +83,7 @@ export default function Profile() {
     e.preventDefault();
     try {
       const token = localStorage.getItem('accessToken');
-      await axios.put('${import.meta.env.VITE_API_URL}/api/user/profile', {
+      await axios.put(`${import.meta.env.VITE_API_URL}/api/user/profile`, {
         name: profile.name,
         phone: profile.phone,
         address: profile.address,

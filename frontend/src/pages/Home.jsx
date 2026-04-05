@@ -18,16 +18,23 @@ export default function Home() {
   const [priceMax, setPriceMax] = useState(null);
   const [categorySlug, setCategorySlug] = useState(null);
   const [products, setProducts] = useState([]);
+  const [reels, setReels] = useState([]);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const { data } = await axios.get('${import.meta.env.VITE_API_URL}/api/products?limit=50');
-        if (data.success) {
-          setProducts(data.data.products);
+        const [prodRes, reelRes] = await Promise.all([
+          axios.get(`${import.meta.env.VITE_API_URL}/api/products?limit=50`),
+          axios.get(`${import.meta.env.VITE_API_URL}/api/reels`)
+        ]);
+        if (prodRes.data.success) {
+          setProducts(prodRes.data.data.products);
+        }
+        if (reelRes.data.success) {
+          setReels(reelRes.data.data);
         }
       } catch (error) {
-        console.error('Failed to fetch products', error);
+        console.error('Failed to fetch data', error);
       }
     };
     fetchProducts();
@@ -36,17 +43,23 @@ export default function Home() {
   const filteredProducts = useMemo(() => {
     let list = [...products];
     if (priceMax) {
-      list = list.filter(p => p.price <= priceMax);
+      list = list.filter(p => Number(p.price) <= Number(priceMax));
     }
     if (categorySlug) {
-      list = list.filter(p =>
-        p.category?.slug === categorySlug ||
-        p.category?.name?.toLowerCase().includes(categorySlug.toLowerCase()) ||
-        p.subcategory?.slug === categorySlug ||
-        p.subcategory?.name?.toLowerCase().includes(categorySlug.toLowerCase()) ||
-        p.name.toLowerCase().includes(categorySlug.toLowerCase()) ||
-        p.tags?.includes(categorySlug)
-      );
+      const slug = categorySlug.toLowerCase();
+      list = list.filter(p => {
+        const catSlug = p.category?.slug?.toLowerCase() || p.categoryId?.slug?.toLowerCase();
+        const catName = p.category?.name?.toLowerCase() || p.categoryId?.name?.toLowerCase();
+        const subSlug = p.subcategory?.slug?.toLowerCase() || p.subcategoryId?.slug?.toLowerCase();
+        const subName = p.subcategory?.name?.toLowerCase() || p.subcategoryId?.name?.toLowerCase();
+        return (
+          catSlug === slug ||
+          (catName && catName.includes(slug)) ||
+          subSlug === slug ||
+          (subName && subName.includes(slug)) ||
+          p.name.toLowerCase().includes(slug)
+        );
+      });
     }
     return list;
   }, [priceMax, categorySlug, products]);
@@ -165,6 +178,45 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Reels Section */}
+      {reels.length > 0 && (
+        <section className="py-12 bg-white border-t border-golden/10">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <h2 className="text-center font-sans text-xl sm:text-2xl font-bold text-gray-900 mb-8 uppercase tracking-widest section-title">
+              STYLE REELS
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto">
+              {reels.map(r => (
+                <div key={r.id} className="group relative rounded-2xl overflow-hidden shadow-sm border border-golden/30 bg-black flex flex-col hover:border-primary transition-colors">
+                  {/* Video Container forces 9:16 aspect ratio */}
+                  <div className="relative pt-[177%] w-full bg-gray-900 overflow-hidden">
+                    <video 
+                      src={r.videoUrl} 
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
+                      autoPlay 
+                      muted 
+                      loop 
+                      playsInline 
+                    />
+                  </div>
+                  {/* Bottom Action Area */}
+                  <div className="absolute bottom-0 w-full min-h-[30%] bg-gradient-to-t from-black/90 via-black/50 to-transparent p-4 flex flex-col items-center justify-end opacity-90 group-hover:opacity-100 transition-opacity">
+                    {r.productId && (
+                      <Link 
+                        to={`/product/${r.productId.id}`}
+                        className="w-full bg-white/95 backdrop-blur-sm hover:bg-primary hover:text-white text-gray-900 text-center py-2.5 sm:py-3 rounded-full font-bold text-xs sm:text-sm shadow-xl inline-block transition-all transform hover:-translate-y-1"
+                      >
+                        Buy Now • ₹{r.productId.price}
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Customer Reviews */}
       <section className="py-12 sm:py-16 bg-white border-t border-golden/10">

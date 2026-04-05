@@ -31,11 +31,11 @@ export default function FilterBar({ productCount = 0, onPriceFilter, onCategoryF
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const { data } = await axios.get('${import.meta.env.VITE_API_URL}/api/categories');
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/categories`);
         if (data && data.data) {
           const mapImages = data.data.map((cat, idx) => ({
             ...cat,
-            image: defaultImages[idx % defaultImages.length]
+            image: cat.image || defaultImages[idx % defaultImages.length]
           }));
           setCategories(mapImages);
         }

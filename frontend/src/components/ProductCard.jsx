@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { HiHeart, HiEye, HiStar, HiShoppingCart } from 'react-icons/hi2';
 import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
 import Modal from './Modal';
 
 function formatPrice(price) {
@@ -10,9 +11,10 @@ function formatPrice(price) {
 }
 
 export default function ProductCard({ product, index = 0 }) {
-  const [wishlisted, setWishlisted] = useState(false);
   const [quickViewOpen, setQuickViewOpen] = useState(false);
   const { addToCart } = useCart();
+  const { isWishlisted, toggleWishlist } = useWishlist();
+  const wishlisted = isWishlisted(product.id);
 
   const discount = product.originalPrice
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
@@ -81,7 +83,7 @@ export default function ProductCard({ product, index = 0 }) {
               type="button"
               onClick={(e) => {
                 e.preventDefault();
-                setWishlisted(!wishlisted);
+                toggleWishlist(product);
               }}
               className={`pointer-events-auto opacity-0 group-hover:opacity-100 translate-y-3 group-hover:translate-y-0 transition-all duration-300 delay-75 p-2.5 rounded-full shadow-md ${wishlisted ? 'bg-primary text-white' : 'bg-white text-gray-700 hover:text-primary'}`}
               aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
