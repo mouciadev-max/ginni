@@ -9,8 +9,16 @@ const app = express();
 
 // Middlewares
 app.use(helmet({ crossOriginResourcePolicy: false }));
+// Normalize FRONTEND_URL by stripping trailing slash
+const frontendUrl = (process.env.FRONTEND_URL || '').replace(/\/+$/, '');
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:5174', 'http://127.0.0.1:5173', 'http://127.0.0.1:5174', process.env.FRONTEND_URL],
+  origin: [
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://127.0.0.1:5173',
+    'http://127.0.0.1:5174',
+    ...(frontendUrl ? [frontendUrl] : [])
+  ],
   credentials: true
 }));
 app.use(express.json());
